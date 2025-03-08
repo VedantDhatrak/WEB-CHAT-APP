@@ -8330,3 +8330,23 @@ a[data-toggle="collapse"] {
 
 .subscribe-form .form-control {
   background: #4897fc; }
+
+
+
+
+
+  .cursor-pointer{
+    cursor: pointer;
+  }
+  #chat-container{
+    background-color: grey;
+    width: 80%;
+    height: 500px;
+    overflow: scroll;
+  }
+  .border{
+    width: 65%;
+  }
+  .chat-section{
+    display: none;
+  }
