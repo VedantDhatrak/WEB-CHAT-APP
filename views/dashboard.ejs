@@ -73,6 +73,9 @@
 
                 $('.start-head').hide();
                 $('.chat-section').show();
+
+                socket.emit('existsChat', {sender_id:sender_id, receiver_id:receiver_id });
+
             });
         });
 
@@ -132,6 +135,7 @@
                         $('#chat-container').append(html);
                         // FOR SHOWING BOTH SIDE CHATS 
                         socket.emit('newChat', response.data);
+                        scrollChat();
                     } else {
                         alert(response.msg);
                     }
@@ -140,7 +144,7 @@
         });
 
         // loading chat for both users 
-        socket.on('loadNewChat', function(data){
+        socket.on('loadNewChat', function (data) {
             // if (sender_id == data.receiver_id.trim() && receiver_id.trim() == sender_id) {
             // if (sender_id.trim() == data.receiver_id.trim() && receiver_id.trim() == sender_id.trim()) {
             //     if (sender_id.trim() === data.receiver_id.trim() && receiver_id.trim() === sender_id.trim()) {
@@ -149,13 +153,62 @@
             //             </div>`;
             //             $('#chat-container').append(html);
             // }
+            console.log(data);
 
             let html = `<div class="distance-user-chat">
-                            <h5>`+data.message+`</h5>
+                            <h5>`+ data.message + `</h5>
                         </div>`;
-                        $('#chat-container').append(html);
-            
+            $('#chat-container').append(html);
+            scrollChat();
+
         });
+
+        // this is for having seperate chats with each users but not working because of if statement needed imp 
+        //         socket.on('loadNewChat', function(data) {
+        //     console.log('Received data:', data); // Log received data
+
+        //     if (sender_id.trim() === data.receiver_id.trim() && receiver_id.trim() === sender_id.trim()) {
+        //         console.log('Condition met, appending message'); // Log if condition is met
+        //         let html = `<div class="distance-user-chat">
+        //                         <h5>` + data.message + `</h5>
+        //                     </div>`;
+        //         $('#chat-container').append(html);
+        //     } else {
+        //         console.log('Condition not met'); // Log if condition is not met
+        //     }
+        // });
+
+        // loading previous old chats 
+        socket.on('loadChats', function (data) {
+            $('#chat-container').html('');
+
+            var chats = data.chats;
+            let html = '';
+
+            for (let x = 0; x < chats.length; x++) {
+                // const element = array[x];
+                let addClass = '';
+                if (chats[x]['sender_id'] == sender_id) {
+                    addClass = 'current-user-chat';
+                }
+                else{
+                    addClass = 'distance-user-chat';
+                }
+
+                html += `<div class="`+addClass+`">
+                            <h5>`+ chats[x]['message'] + `</h5>
+                        </div>`;
+                
+            }
+            $('#chat-container').append(html);
+            scrollChat();
+        });
+
+        function scrollChat() {
+            $('#chat-container').animate({
+                scrollTop:$('#chat-container').offset().top+ $('#chat-container')[0].scrollHeight
+            },0);
+        }
 
     </script>
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
