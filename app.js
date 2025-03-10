@@ -9,7 +9,8 @@ const http = require('http').Server(app);
 
 const userRoute = require('./routes/userRoute');
 
-const User = require('./models/userModel')
+const User = require('./models/userModel');
+const { Console } = require('console');
 
 app.use('/', userRoute);
 
@@ -21,11 +22,24 @@ usp.on('connection',async function(socket){
     
    await User.findByIdAndUpdate({ _id: userId}, { $set:{ is_online:'1'}})
 
+    // telling connection i am online 
+    socket.broadcast.emit('getOnlineUser', {user_id: userId});
+
     socket.on('disconnect',async function(){
         console.log('user disconnected')
         var userId = socket.handshake.auth.token;
     
         await User.findByIdAndUpdate({ _id: userId}, { $set:{ is_online:'0'}})
+
+        // telling connection i am offline 
+        socket.broadcast.emit('getOfflineUser', {user_id: userId});
+
+    });
+
+    // for showing bot side chats 
+    socket.on('newChat', function(data){
+        // Console.log('new chat received', data)
+        socket.broadcast.emit('loadNewChat', data);
     });
 });
 
