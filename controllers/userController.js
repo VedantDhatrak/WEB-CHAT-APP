@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 const Chat = require('../models/chatModel');
+const Group = require('../models/groupModel')
 
 const bcrypt = require('bcrypt');
 const req = require('express/lib/request');
@@ -51,6 +52,7 @@ const login = async(req,res) =>{
             const passwordMatch = await bcrypt.compare(password, userData.password);
             if (passwordMatch) {
                 req.session.user = userData;
+                res.cookie('user' ,JSON.stringify(userData));
                 res.redirect('/dashboard');
             } else {
                 res.render('login',{message:'Email and password is incorrect!'});
@@ -65,6 +67,7 @@ const login = async(req,res) =>{
 }
 const logout = async(req,res) =>{
     try {
+        res.clearCookie('user');
         req.session.destroy();
         res.redirect('/');
     } catch (error) {
@@ -97,6 +100,34 @@ const saveChat = async (req, res) => {
     }
 }
 
+const loadGroups = async(req, res)=>{
+    try {
+
+        const groups = await Group.find({creator_id: req.session.user._id });
+        res.render('group', { groups:groups});
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+const createGroup = async(req, res)=>{
+    try {
+
+        const group = new Group({
+            creator_id:req.session.user._id,
+            name: req.body.name,
+            image:'image/'+req.file.filename,
+            limit: req.body.limit
+        });
+        await group.save();
+
+        const groups = await Group.find({creator_id: req.session.user._id });
+
+        res.render('group', {message: req.body.name+'Group created successfully', groups:groups});
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 module.exports = {
     registerLoad,
     register,
@@ -104,5 +135,7 @@ module.exports = {
     login,
     logout,
     loadDashboard,
-    saveChat
+    saveChat,
+    loadGroups,
+    createGroup
 }

@@ -11,7 +11,7 @@ const userRoute = require('./routes/userRoute');
 
 const User = require('./models/userModel');
 const Chat = require('./models/chatModel');
-// const { Console } = require('console'); imported by mistake not required in this project
+// const { Console } = require('console'); mistakenly imported by me not required in this project 
 
 app.use('/', userRoute);
 

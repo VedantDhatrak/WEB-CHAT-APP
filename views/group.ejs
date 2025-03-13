@@ -1,0 +1,92 @@
+<%- include('layouts/header.ejs') %>
+
+    <h1 class="mb-4">group
+    </h1>
+
+    <div class="container">
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createGroupModel">
+            Create Group
+        </button>
+
+        <% if(typeof message !=='undefined' ){ %>
+            <p style="color: greenyellow;">
+                <%= message %></p>
+                    <% } %>
+
+
+                    <table class="table mt-4">
+                        <thead>
+                            <tr>
+                                <th>-</th>
+                                <th>Name</th>
+                                <th>Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <!-- <% 
+                                if(groups.length > 0){
+                                    for(let i = 0; i < groups.length; i++){
+                                        %>
+                                            <tr>
+                                                <td><%= i+1 %></td>
+                                                <td>
+                                                    <img src="http://127.0.0.1:3000/<%= groups[i]['image'] %>" alt="<%= groups[i]['name'] %>" width="50px" height="50px">
+                                                </td>
+                                            </tr>
+                                        <%
+                                    }
+                                }
+                                else{
+                                    %>
+                                        <tr>
+                                            <td>Sorry you are not part of any groups </td>
+                                        </tr>
+                                    <%
+                                }
+                            %> -->
+
+                        </tbody>
+                        
+                    </table>
+
+                        <!-- Modal by bootstrap-->
+                        <div class="modal fade" id="createGroupModel" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Create Group</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <form action="" enctype="multipart/form-data" method="post">
+                                        <div class="modal-body">
+                                            <input type="text" name="name" placeholder="Enter Group Name" required-class="w-100 mb-2">
+                                            <input type="file" name="image"  required-class="w-100 mb-2">
+                                            <input type="number" name="limit" placeholder="Enter Members Limit" min="1" required-class="w-100 mb-2">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Create</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+    </div>
+
+    <!-- i have commented this script. After that error gone failed to load view. But not resolved yet -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+
+
+    <%- include('layouts/footer.ejs') %>

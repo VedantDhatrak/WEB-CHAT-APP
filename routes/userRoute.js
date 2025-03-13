@@ -8,6 +8,9 @@ const session = require('express-session');
 const{SESSION_SECRET} = process.env;
 user_route.use(session({secret:SESSION_SECRET}));
 
+const cookieParser = require('cookie-parser');
+user_route.use(cookieParser());
+
 user_route.use(bodyParser.json());
 user_route.use(bodyParser.urlencoded({extended:true}));
 
@@ -45,6 +48,9 @@ user_route.get('/dashboard', auth.isLogin, userController.loadDashboard)
 
 user_route.post('/save-chat', userController.saveChat);
 
+user_route.get('/group', auth.isLogin, userController.loadGroups);
+user_route.post('/group', upload.single('image'), userController.createGroup);
+// for going to dashboard/chats from group what i will be doing that i will load(get) dashboard then auth.group usercntrl laod-dashboard   
 user_route.get('*', function(req, res){
     res.redirect('/');
 });
