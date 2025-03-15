@@ -50,7 +50,11 @@ user_route.post('/save-chat', userController.saveChat);
 
 user_route.get('/group', auth.isLogin, userController.loadGroups);
 user_route.post('/group', upload.single('image'), userController.createGroup);
-// for going to dashboard/chats from group what i will be doing that i will load(get) dashboard then auth.group usercntrl laod-dashboard   
+// for going to dashboard/chats from group what i will be doing that i will load(get) dashboard then auth.group usercntrl laod-dashboard 
+
+user_route.post('/get-members', auth.isLogin, userController.getMembers);
+
+
 user_route.get('*', function(req, res){
     res.redirect('/');
 });

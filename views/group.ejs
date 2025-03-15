@@ -12,73 +12,124 @@
 
         <% if(typeof message !=='undefined' ){ %>
             <p style="color: greenyellow;">
-                <%= message %></p>
-                    <% } %>
+                <%= message %>
+            </p>
+            <% } %>
 
 
-                    <table class="table mt-4">
-                        <thead>
-                            <tr>
-                                <th>-</th>
-                                <th>Name</th>
-                                <th>Info</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            <!-- <% 
-                                if(groups.length > 0){
-                                    for(let i = 0; i < groups.length; i++){
-                                        %>
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th>-</th>
+                            <th>Name</th>
+                            <th>Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <% if(groups.length> 0){
+                            for(let i = 0; i < groups.length; i++){ %>
+                                <tr>
+                                    <!-- if i want to show serial numbers of the table uncomment the below line  -->
+                                    <!-- <td><%= i+1 %></td> -->
+                                    <td>
+                                        <!-- if i want to show name as a alternative for faild loaded image uncomment below line  -->
+                                        <!-- <img src="http://127.0.0.1:3000/<%= groups[i]['image'] %>" alt="<%= groups[i]['name'] %>" width="50px" height="50px"> -->
+                                        <img src="http://127.0.0.1:3000/<%= groups[i]['image'] %>" alt="" width="50px"
+                                            height="50px">
+                                    </td>
+                                    <td>
+                                        <%= groups[i]['name'] %>
+                                    </td>
+                                    <td>
+                                        <a href="" class="cursor-pointer addMember" data-id=" <%= groups[i]['_id'] %>"
+                                            data-limit="<%= groups[i]['limit'] %>" data-toggle="modal"
+                                            data-target="#memberModel">ⓘ</a>
+                                    </td>
+                                </tr>
+                                <% } } else{ %>
+                                    <tr>
+                                        <td>Sorry you are not part of any groups </td>
+                                    </tr>
+                                    <% } %>
+
+                    </tbody>
+
+                </table>
+
+                <!-- Modal for adding members-->
+                <div class="modal fade" id="memberModel" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Members</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <form action="" id="add-member-form">
+                                <div class="modal-body">
+                                    <input type="hidden" name="group_id" id="group_id">
+                                    <input type="hidden" name="limit" id="limit">
+                                    <table class="table">
+                                        <thead>
                                             <tr>
-                                                <td><%= i+1 %></td>
-                                                <td>
-                                                    <img src="http://127.0.0.1:3000/<%= groups[i]['image'] %>" alt="<%= groups[i]['name'] %>" width="50px" height="50px">
+                                                <th>Select</th>
+                                                <th>Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="addMemberTable">
+                                                        <table class="table addMembersInTable">
+                                                            
+                                                        </table>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        <%
-                                    }
-                                }
-                                else{
-                                    %>
-                                        <tr>
-                                            <td>Sorry you are not part of any groups </td>
-                                        </tr>
-                                    <%
-                                }
-                            %> -->
-
-                        </tbody>
-                        
-                    </table>
-
-                        <!-- Modal by bootstrap-->
-                        <div class="modal fade" id="createGroupModel" tabindex="-1" role="dialog"
-                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitle">Create Group</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-
-                                    <form action="" enctype="multipart/form-data" method="post">
-                                        <div class="modal-body">
-                                            <input type="text" name="name" placeholder="Enter Group Name" required-class="w-100 mb-2">
-                                            <input type="file" name="image"  required-class="w-100 mb-2">
-                                            <input type="number" name="limit" placeholder="Enter Members Limit" min="1" required-class="w-100 mb-2">
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Create</button>
-                                        </div>
-                                    </form>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Add members</button>
+                                </div>
+                            </form>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Modal by bootstrap-->
+                <div class="modal fade" id="createGroupModel" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Create Group</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <form action="" enctype="multipart/form-data" method="post">
+                                <div class="modal-body">
+                                    <input type="text" name="name" placeholder="Enter Group Name"
+                                        required-class="w-100 mb-2">
+                                    <input type="file" name="image" required-class="w-100 mb-2">
+                                    <input type="number" name="limit" placeholder="Enter Members Limit" min="1"
+                                        required-class="w-100 mb-2">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
     </div>
 

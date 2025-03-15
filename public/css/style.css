@@ -8361,3 +8361,9 @@ a[data-toggle="collapse"] {
     margin: 10px;
     color: black;
   }
+
+  .addMemberTable{
+    overflow-y: scroll;
+    height: 100px;
+    width: 100%;
+  }

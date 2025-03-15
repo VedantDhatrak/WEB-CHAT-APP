@@ -55,7 +55,7 @@ $(document).ready(function () {
 		$('.start-head').hide();
 		$('.chat-section').show();
 
-		socket.emit('existsChat', {sender_id:sender_id, receiver_id:receiver_id });
+		socket.emit('existsChat', { sender_id: sender_id, receiver_id: receiver_id });
 
 	});
 });
@@ -172,14 +172,14 @@ socket.on('loadChats', function (data) {
 		if (chats[x]['sender_id'] == sender_id) {
 			addClass = 'current-user-chat';
 		}
-		else{
+		else {
 			addClass = 'distance-user-chat';
 		}
 
-		html += `<div class="`+addClass+`">
+		html += `<div class="` + addClass + `">
 					<h5>`+ chats[x]['message'] + `</h5>
 				</div>`;
-		
+
 	}
 	$('#chat-container').append(html);
 	scrollChat();
@@ -187,6 +187,41 @@ socket.on('loadChats', function (data) {
 
 function scrollChat() {
 	$('#chat-container').animate({
-		scrollTop:$('#chat-container').offset().top+ $('#chat-container')[0].scrollHeight
-	},0);
+		scrollTop: $('#chat-container').offset().top + $('#chat-container')[0].scrollHeight
+	}, 0);
 }
+
+
+//add meber js
+$('.addMember').click(function () {
+	var id = $(this).attr('data-id');
+	var limit = $(this).attr('data-limit');
+	$('#group_id').val(id);
+	$('#limit').val(limit);
+
+	$.ajax({
+		url: '/get-members',
+		type: 'POST',
+		data: { group_id: id },
+		success: function (res) {
+			if (res.success == true) {
+				let users = res.data;
+				let html = '';
+				for (let i = 0; i < users.length; i++) {
+					html += `
+		<tr>
+		<td>
+		<input type="checkbox" name="members[]" value="`+ users[i]['_id'] + `"/>
+		</td>
+		<td>`+ users[i]['name'] + `</td>
+		</tr>`;
+				}
+				$('.addMembersInTable').html(html);
+			}
+			else {
+				alert(res.msg);
+			}
+		}
+	});
+
+});
