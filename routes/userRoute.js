@@ -2,7 +2,7 @@ const express = require('express');
 const user_route = express();
 
 
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser'); 
 
 const session = require('express-session');
 const{SESSION_SECRET} = process.env;
@@ -11,8 +11,11 @@ user_route.use(session({secret:SESSION_SECRET}));
 const cookieParser = require('cookie-parser');
 user_route.use(cookieParser());
 
+
 user_route.use(bodyParser.json());
 user_route.use(bodyParser.urlencoded({extended:true}));
+
+
 
 user_route.set('view engine', 'ejs');
 user_route.set('views','./views');
@@ -53,6 +56,10 @@ user_route.post('/group', upload.single('image'), userController.createGroup);
 // for going to dashboard/chats from group what i will be doing that i will load(get) dashboard then auth.group usercntrl laod-dashboard 
 
 user_route.post('/get-members', auth.isLogin, userController.getMembers);
+// user_route.post('/add-members', auth.isLogin, userController.addMembers);
+//debugging
+user_route.post('/add-members', upload.none(), auth.isLogin, userController.addMembers);
+
 
 
 user_route.get('*', function(req, res){

@@ -224,4 +224,123 @@ $('.addMember').click(function () {
 		}
 	});
 
+
+
 });
+
+
+// from here adding memebers on subit 
+// $('#add-member-form').submit(function (event) {
+// 	event.preventDefault();
+// 	var formData = $(this).serialize();
+// 	//debugging
+// 	// var formData = new FormData(this);
+
+// 	$.ajax({
+// 		url: "/add-members",
+// 		type: "POST",
+// 		data: formData,
+// 		//debugging
+// 		// Prevent jQuery from processing the data
+// 		// processData: false, 
+// 		// Prevent jQuery from setting content type
+// 		// contentType: false, 
+// 		success: function (res) {
+// 			if (res.success) {
+// 				$('#memberModal').modal('hide');
+// 				$('#add-member-form')[0].reset();
+// 				alert(res.msg)
+// 			} else {
+// 				$('#add-member-error').text(res.msg);
+// 				setTimeout(() => {
+// 					$('#add-member-error').text('');
+// 				}, 3000);
+// 			}
+// 		}
+// 	});
+// });
+
+$('#add-member-form').submit(function (event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+
+    // Ensure members are properly added as an array
+    let members = [];
+    $('input[name="members"]:checked').each(function () {
+        members.push($(this).val());
+    });
+
+    // Append members array as separate values
+    members.forEach(member => {
+        formData.append('members[]', member);
+    });
+
+    $.ajax({
+        url: "/add-members",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+            if (res.success) {
+                if ($('#memberModal').length) {
+                    $('#memberModal').modal('hide'); // Ensure modal exists before hiding
+                }
+                $('#add-member-form')[0].reset();
+                alert(res.msg);
+            } else {
+                $('#add-member-error').text(res.msg);
+                setTimeout(() => {
+                    $('#add-member-error').text('');
+                }, 3000);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", status, error);
+            $('#add-member-error').text("Something went wrong. Please try again.");
+            setTimeout(() => {
+                $('#add-member-error').text('');
+            }, 3000);
+        }
+    });
+});
+
+
+
+// debugging 
+// $(document).ready(function () {
+//     $("#add-member-form").submit(function (event) {
+//         event.preventDefault(); // Prevent normal form submission
+        
+//         let formData = new FormData(this);
+//         let selectedMembers = [];
+
+//         $(".addMembersInTable input[type='checkbox']:checked").each(function () {
+//             formData.append("members[]", $(this).val()); // Correctly appending array values
+//             selectedMembers.push($(this).val());
+//         });
+
+//         if (selectedMembers.length === 0) {
+//             $("#add-member-error").text("Please select at least one member.");
+//             return;
+//         }
+
+//         $.ajax({
+//             url: "/add-members", // Ensure this matches your route
+//             type: "POST",
+//             data: formData,
+//             contentType: false,
+//             processData: false,
+//             success: function (response) {
+//                 alert(response.msg);
+//                 if (response.success) {
+//                     location.reload();
+//                 }
+//             },
+//             error: function (xhr) {
+//                 console.error(xhr.responseText);
+//             }
+//         });
+//     });
+// });
