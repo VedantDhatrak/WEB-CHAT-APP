@@ -337,6 +337,44 @@ const addMembers = async (req, res) => {
 // };
 
 
+// const groupChats = async(req, res) => {
+//     try {
+//         const myGroups = await Group.find({ creator_id:req.session.user_id});
+//         const joinedGroups = await Member.find({ user_id:req.session.user_id}).populate('group_id');
+
+//         res.render('chat-group', {myGroups: myGroups, joinedGroups: joinedGroups});
+//     } catch (error) {
+//         console.log(error.message)
+//     }
+// }
+
+//debugging 
+const groupChats = async (req, res) => {
+    try {
+        console.log("Session Data:", req.session); // Debug entire session
+
+        if (!req.session.user || !req.session.user._id) {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+
+        const userId = req.session.user._id; // ✅ Correctly get user ID
+
+        console.log("Session User ID:", userId);
+
+        const myGroups = await Group.find({ creator_id: userId });
+        const joinedGroupIds = await Member.find({ user_id: userId }).distinct("group_id");
+        const joinedGroups = await Group.find({ _id: { $in: joinedGroupIds } });
+
+        res.render("chat-group", { myGroups, joinedGroups });
+    } catch (error) {
+        console.error("Error fetching group chats:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+
+
 module.exports = {
     registerLoad,
     register,
@@ -348,5 +386,6 @@ module.exports = {
     loadGroups,
     createGroup,
     getMembers,
-    addMembers
+    addMembers,
+    groupChats
 }
