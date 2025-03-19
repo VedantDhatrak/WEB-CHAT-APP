@@ -36,6 +36,7 @@ var userData = JSON.parse(getCookie('user'));
 
 var sender_id = userData._id;
 var receiver_id;
+var global_group_id;
 
 var socket = io('/user-namespace', {
 	auth: {
@@ -261,49 +262,49 @@ $('.addMember').click(function () {
 // });
 
 $('#add-member-form').submit(function (event) {
-    event.preventDefault();
+	event.preventDefault();
 
-    var formData = new FormData(this);
+	var formData = new FormData(this);
 
-    // Ensure members are properly added as an array
-    let members = [];
-    $('input[name="members"]:checked').each(function () {
-        members.push($(this).val());
-    });
+	// Ensure members are properly added as an array
+	let members = [];
+	$('input[name="members"]:checked').each(function () {
+		members.push($(this).val());
+	});
 
-    // Append members array as separate values
-    members.forEach(member => {
-        formData.append('members[]', member);
-    });
+	// Append members array as separate values
+	members.forEach(member => {
+		formData.append('members[]', member);
+	});
 
-    $.ajax({
-        url: "/add-members",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (res) {
-            if (res.success) {
-                if ($('#memberModal').length) {
-                    $('#memberModal').modal('hide'); // Ensure modal exists before hiding
-                }
-                $('#add-member-form')[0].reset();
-                alert(res.msg);
-            } else {
-                $('#add-member-error').text(res.msg);
-                setTimeout(() => {
-                    $('#add-member-error').text('');
-                }, 3000);
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            $('#add-member-error').text("Something went wrong. Please try again.");
-            setTimeout(() => {
-                $('#add-member-error').text('');
-            }, 3000);
-        }
-    });
+	$.ajax({
+		url: "/add-members",
+		type: "POST",
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (res) {
+			if (res.success) {
+				if ($('#memberModal').length) {
+					$('#memberModal').modal('hide'); // Ensure modal exists before hiding
+				}
+				$('#add-member-form')[0].reset();
+				alert(res.msg);
+			} else {
+				$('#add-member-error').text(res.msg);
+				setTimeout(() => {
+					$('#add-member-error').text('');
+				}, 3000);
+			}
+		},
+		error: function (xhr, status, error) {
+			console.error("AJAX Error:", status, error);
+			$('#add-member-error').text("Something went wrong. Please try again.");
+			setTimeout(() => {
+				$('#add-member-error').text('');
+			}, 3000);
+		}
+	});
 });
 
 
@@ -312,7 +313,7 @@ $('#add-member-form').submit(function (event) {
 // $(document).ready(function () {
 //     $("#add-member-form").submit(function (event) {
 //         event.preventDefault(); // Prevent normal form submission
-        
+
 //         let formData = new FormData(this);
 //         let selectedMembers = [];
 
@@ -349,7 +350,59 @@ $('#add-member-form').submit(function (event) {
 
 // group chatting---------------
 
-$('.group-list').click(function(){
+$('.group-list').click(function () {
 	$('.group-start-head').hide();
 	$('.group-chat-section').show();
+
+	global_group_id = $(this).attr('data-id');
+
+});
+
+
+
+$('#group-chat-form').submit(function (event) {
+	event.preventDefault();
+
+	var message = $('#group-message').val();
+	//debugging
+	console.log("Sending Group Chat:", { sender_id, group_id: global_group_id, message });
+
+	$.ajax({
+		url: '/group-chat-save',
+		type: 'POST',
+		data: { sender_id: sender_id, group_id: global_group_id, message: message },
+		success: function (response) {
+			if (response.success) {
+				console.log(response.chat);
+
+				$('#group-message').val('');
+				let message = response.chat.message;
+				let html = `
+				<div class="current-user-chat" id="+response.chat._id+" >
+					<h5>${message}</h5>
+				</div>`;
+				$('#group-chat-container').append(html);
+				// FOR SHOWING BOTH SIDE CHATS 
+				socket.emit('newGroupChat', response.chat);
+
+				scrollChat();
+			} else {
+				alert(response.msg);
+			}
+		}
 	});
+});
+
+
+socket.on('loadNewGroupChat', function (data) {
+	if (global_group_id == data.group_id) {
+		let html = `
+		<div class="distance-user-chat" id="`+ data._id + `">
+			<h5>
+				<span>`+ data.message + `</span>
+			</h5>
+		</div>`;
+		$('#group-chat-container').append(html);
+		scrollChat();
+	}
+});

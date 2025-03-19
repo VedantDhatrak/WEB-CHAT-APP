@@ -1,7 +1,8 @@
 const User = require('../models/userModel');
 const Chat = require('../models/chatModel');
 const Group = require('../models/groupModel');
-const Member = require('../models/memberModel')
+const Member = require('../models/memberModel');
+const groupChat = require('../models/groupChatModel');
 
 const bcrypt = require('bcrypt');
 const req = require('express/lib/request');
@@ -373,6 +374,92 @@ const groupChats = async (req, res) => {
 };
 
 
+// const saveGroupChats =  async (req, res) => {
+//     try {
+
+//         var chat = new groupChat({
+//             sender_id: req.body.sender_id,
+//             group_id: req.body.group_id,
+//             message: req.body.message
+//         });
+
+//         var newChat = await chat.save();
+
+//         res.send({success:true});
+//     } catch (error) {
+//         res.send({ success: false , msg:error.message});
+//     }
+// }
+
+
+
+
+// new debufgging for saveGroupChats workeeddddddddd
+const mongoose = require('mongoose');
+// const groupChat = require('../models/groupChatModel');
+
+
+// working just commented for because i want to check for displaying group messages 
+const saveGroupChats = async (req, res) => {
+    try {
+        const { sender_id, group_id, message } = req.body;
+
+        // Validate required fields
+        if (!sender_id || !group_id || !message) {
+            return res.status(400).json({ success: false, msg: 'All fields are required' });
+        }
+
+        // Ensure sender_id and group_id are valid ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(sender_id)) {
+            return res.status(400).json({ success: false, msg: 'Invalid sender_id' });
+        }
+        if (!mongoose.Types.ObjectId.isValid(group_id)) {
+            return res.status(400).json({ success: false, msg: 'Invalid group_id' });
+        }
+
+        // Create a new chat entry
+        const chat = new groupChat({
+            sender_id: new mongoose.Types.ObjectId(sender_id),
+            group_id: new mongoose.Types.ObjectId(group_id),
+            message: message.trim() // Ensure message doesn't have extra spaces
+        });
+
+        // Save to database
+        const newChat = await chat.save();
+
+        // Send success response with chat data
+        res.status(200).json({ success: true, msg: 'Message saved', chat: newChat });
+
+    } catch (error) {
+        console.error('Error saving group chat:', error);
+        res.status(500).json({ success: false, msg: 'Internal Server Error', error: error.message });
+    }
+};
+
+
+//debugging saveGroupChats
+// const saveGroupChats = async (req, res) => { 
+//     try {
+//         // Ensure sender_id and group_id are strings before applying trim
+//         const sender_id = req.body.sender_id ? String(req.body.sender_id).trim() : "";
+//         const group_id = req.body.group_id ? String(req.body.group_id).trim() : "";
+//         const message = req.body.message ? String(req.body.message).trim() : "";
+
+//         var chat = new groupChat({
+//             sender_id,
+//             group_id,
+//             message
+//         });
+
+//         var newChat = await chat.save();
+
+//         res.send({ success: true });
+//     } catch (error) {
+//         res.send({ success: false, msg: error.message });
+//     }
+// };
+
+
 
 
 module.exports = {
@@ -387,5 +474,6 @@ module.exports = {
     createGroup,
     getMembers,
     addMembers,
-    groupChats
+    groupChats,
+    saveGroupChats
 }

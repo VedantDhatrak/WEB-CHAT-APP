@@ -62,6 +62,7 @@ user_route.post('/add-members', upload.none(), auth.isLogin, userController.addM
 
 
 user_route.get('/group-chat',auth.isLogin, userController.groupChats);
+user_route.post('/group-chat-save', userController.saveGroupChats);
 
 user_route.get('*', function(req, res){
     res.redirect('/');

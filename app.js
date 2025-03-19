@@ -51,6 +51,13 @@ usp.on('connection',async function(socket){
         ]});
         socket.emit('loadChats', {chats: chats});
     });
+
+
+    //for showing group chats in container
+    socket.on('newGroupChat', function(data){
+        // Console.log('new chat received', data)
+        socket.broadcast.emit('loadNewGroupChat', data);
+    });
 });
 
 http.listen(3000, function(){
